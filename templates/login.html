@@ -12,6 +12,9 @@
 
 <body>
     <center>
+        {% if msg %}
+            <div style="color: red;">*{{msg}}</div>
+        {% endif %}
         <div class="div">
             <div class="banner"></div>
             <div class="content">

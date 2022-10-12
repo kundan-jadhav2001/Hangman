@@ -51,19 +51,26 @@ def confirmlogin(request):
         username = request.POST['username']
         password = request.POST['password'] 
 
-        with connection.cursor() as cursor:
-            cursor.execute("select username, pass from userinfo where username = %s", [username])
-            # cursor.execute("select * from userinfo ;")
-            row = cursor.fetchone()
-            if username==row[0]:
-                if password==row[1]:
-                    return render(request, "quiz.html", {"username":username, "password":password})
-                else:
-                    return render(request, 'signup.html',{'msg':"Wrong Password is incorrect"})
-
+        if username=="" or password == "":
+            return render(request, "login.html", {'msg':"Username or Password should not be empty"})
+        else:
+            with connection.cursor() as cursor:
+                try:
+                    cursor.execute("select username, pass from userinfo where username = %s", [username])
+                    # cursor.execute("select * from userinfo ;")
+                    row = cursor.fetchone()
+                except:
+                    return render(request, 'signup.html',{'msg':'You have no account please create one...'})
+                if row!= None or row != "":
+                    if username==row[0]:
+                        if password==row[1]:
+                            return render(request, "quiz.html", {"username":username, "password":password})
+                        else:
+                            return render(request, 'login.html',{'msg':"Password is incorrect"})
+    return render(request, 'signup.html',{'msg':'You have no account please create one...'})
             
 
-    return render(request, 'signup.html',{'msg':'You have no account please create one...'})
+    
 
 def selectsub(request):
     return render(request, 'selectsub.html')
