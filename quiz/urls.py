@@ -10,5 +10,12 @@ urlpatterns = [
     path('confirmsignup', views.confirmsignup),
     path('createtable', views.createtable),
     path('selectsub', views.selectsub),
-    path('quiz', views.quiz)
+    path('quiz', views.quiz),
+    path('SE',views.SE),
+    path('IP',views.IP),
+    path('DWM',views.DWM),
+    path('CN',views.CN),
+    path('quiz/SE/""',views.clicked),
+    path('quiz/DWM/<string>',views.clicked)
+
 ]

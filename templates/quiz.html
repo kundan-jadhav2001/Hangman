@@ -40,13 +40,17 @@
             height: 70px;
         }
     </style>
+
 </head>
 
 <body>
+    {% if sub %}
+		<div style="color: red;">*{{sub}}</div>
+	{% endif %}
     <center>
 
 
-        <p>In CMM,middle M stands for?</p>
+        <p>{{question}}</p>
         <br>
         <input type="text">
         <input type="text">
@@ -61,36 +65,38 @@
         <div class="grid-contianer">
 
 
-            <button class="griditem">A</button>
-            <button class="griditem">B</button>
-            <button class="griditem">C</button>
-            <button class="griditem">D</button>
-            <button class="griditem">E</button>
+            
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}a"><button class="griditem" {% if a in lst%} disabled="true" {% endif %}>A</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}b"><button class="griditem" {% if b in lst%} disabled="true" {% endif %}>B</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}c"><button class="griditem" {% if c in lst%} disabled="true" {% endif %}>C</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}d"><button class="griditem" {% if e in lst%} disabled="true" {% endif %}>D</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}e"><button class="griditem" {% if f in lst%} disabled="true" {% endif %}>E</button></a>
 
-            <button class="griditem">F</button>
-            <button class="griditem">G</button>
-            <button class="griditem">H</button>
-            <button class="griditem">I</button>
-            <button class="griditem">J</button>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}f"><button class="griditem" {% if g in lst%} disabled="true" {% endif %}>F</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}g"><button class="griditem" {% if h in lst%} disabled="true" {% endif %}>G</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}h"><button class="griditem" {% if i in lst%} disabled="true" {% endif %}>H</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}i"><button class="griditem" {% if j in lst%} disabled="true" {% endif %}>I</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}j"><button class="griditem" {% if k in lst%} disabled="true" {% endif %}>J</button></a>
 
-            <button class="griditem">K</button>
-            <button class="griditem">L</button>
-            <button class="griditem">M</button>
-            <button class="griditem">N</button>
-            <button class="griditem">O</button>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}k"><button class="griditem" {% if l in lst%} disabled="true" {% endif %}>K</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}l"><button class="griditem" {% if m in lst%} disabled="true" {% endif %}>L</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}m"><button class="griditem" {% if n in lst%} disabled="true" {% endif %}>M</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}n"><button class="griditem" {% if o in lst%} disabled="true" {% endif %}>N</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}o"><button class="griditem" {% if p in lst%} disabled="true" {% endif %}>O</button></a>
 
-            <button class="griditem">P</button>
-            <button class="griditem">Q</button>
-            <button class="griditem">R</button>
-            <button class="griditem">S</button>
-            <button class="griditem">T</button>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}p"><button class="griditem" {% if q in lst%} disabled="true" {% endif %}>P</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}q"><button class="griditem" {% if r in lst%} disabled="true" {% endif %}>Q</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}r"><button class="griditem" {% if s in lst%} disabled="true" {% endif %}>R</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}s"><button class="griditem" {% if t in lst%} disabled="true" {% endif %}>S</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}t"><button class="griditem" {% if a in lst%} disabled="true" {% endif %}>T</button></a>
 
-            <button class="griditem">U</button>
-            <button class="griditem">V</button>
-            <button class="griditem">W</button>
-            <button class="griditem">X</button>
-            <button class="griditem">Y</button>
-            <button class="griditem">Z</button>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}u"><button class="griditem" {% if u in lst%} disabled="true" {% endif %}>U</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}v"><button class="griditem" {% if v in lst%} disabled="true" {% endif %}>V</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}w"><button class="griditem" {% if w in lst%} disabled="true" {% endif %}>W</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}x"><button class="griditem" {% if x in lst%} disabled="true" {% endif %}>X</button></a>
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}y"><button class="griditem" {% if y in lst%} disabled="true" {% endif %}>Y</button></a>
+
+            <a href="{% if not url%}quiz/{{sub}}/{% endif %}z"><button class="griditem" {% if z in lst%} disabled="true" {% endif %}>Z</button></a>
 
         </div>
     </center>

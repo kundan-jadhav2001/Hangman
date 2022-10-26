@@ -3,41 +3,47 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login or Signup</title>
-    <link rel="stylesheet" href="{% static login.css %}">
+	<meta charset="UTF-8">
+	<title>Login Page in HTML with CSS Code Example</title>
+	<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+
+
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet"
+		integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+	<link rel="stylesheet" href="{% static login.css%}">
+
 </head>
 
 <body>
-    <center>
-        <div>
-            <div class="img"></div>
-            <div class="content">
-                {% if msg %}
-                <div style="color: red;">*{{msg}}</div>
-                {% endif %}
-                <form action="confirmsignup" method="POST"> {% csrf_token %}
-                    <p class="Signup" name="Signup">Signup</p>
+	{% if msg %}
+		<div style="color: red;">*{{msg}}</div>
+	{% endif %}
+	<!-- partial:index.partial.html -->
+	<div class="box-form">
+		<div class="left">
+			<div class="overlay">
+				<h1>Welcome</h1>
+			</div>
+		</div>
 
-                    <p class="username">Username</p>
-                    <input type="text" name="username">
-                    <br>
-                    <p class="email">Email</p>
-                    <input type="text" name="email">
-                    <br>
-                    <p class="password">Password</p>
-                    <input type="password" name="password">
-                    <br>
-                    <p class="confpass">Confirm password</p>
-                    <input type="password" name="confpass">
-                    <br>
-                    <button class="submit">Submit</button>
-                </form>
-            </div>
-        </div>
-    </center>
+
+		<div class="right">
+			<h5>Signup</h5>
+			<div class="inputs">
+				<form action="confirmsignup" method="POST"> {% csrf_token %}
+					<input type="text" placeholder="name" name="username" required>
+					<br>
+					<input type="text" placeholder="user name" name="username" required>
+					<br>
+					<input type="email" placeholder="email" name="email" required>
+					<br>
+					<input type="password" placeholder="password" name="password" required>
+					<br>
+					<input type="password" placeholder="confirm password" name="confpassword" required>
+					<button>Login</button>
+				</form>
+			</div>
+		</div>
+	</div>
 </body>
-
 </html>
