@@ -7,7 +7,10 @@ from random import randint
 def createtable(request):
     with connection.cursor() as cursor:
         # cursor.execute("create table dwmques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
-        cursor.execute("insert into dwmques values(1,'One type of metadata','operational')")
+        cursor.execute("insert into dwmques values(2,'Kind of system required for data warehouse','sourcesystem')")
+        cursor.execute("insert into dwmques values(3,'It contains non-volatile data','OLAP')")
+        cursor.execute("insert into dwmques values(4,'data warehouse is application','independent')")
+
         # cursor.execute("insert into userinfo values('kundan@gmail.com', 'kundan', 'kundan' )")
         # cursor.execute("drop table userinfo")
         # cursor.execute("create table userinfo(email Varchar(30), pass varchar(20), username varchar(20) primary key)")
@@ -109,8 +112,7 @@ def IP(request):
     return render(request, 'quiz.html',{'sub':sub})
 
 def DWM(request):
-    # n = randint(1, 10)
-    n=1
+    n = randint(1, 4)
     request.session['sub'] = "DWM"
     
     with connection.cursor() as cursor:
@@ -123,7 +125,7 @@ def DWM(request):
     global question, answer, ansstr, lst, tries
     tries = 0
     lst = []
-    answer = row[1]
+    answer = row[1].lower()
     ansstr = "_" * len(answer)
     question = row[0]
     return render(request, 'quiz.html',{'sub':'DWM','question':question,'len_ans':len(answer)})
@@ -143,12 +145,16 @@ def clicked(request,string):
     global lst, ansstr, tries
     if tries==3:
         return(render(request, "loss.html"))
+    
     len_ans = len(answer)
     x = request.path
     letter = x[len(x)-1:]
     lst.append(letter)
     sub = request.session.get('sub')
     occurences = [i for i in range(len_ans) if answer.startswith(letter, i)]
+
+    if ansstr==answer:
+        return(render(request, 'won.html',{'sub':sub}))
 
     for i in occurences:
         ansstr = ansstr[:i] + answer[i] + ansstr[i+1:]
