@@ -112,16 +112,21 @@ def DWM(request):
     # n = randint(1, 10)
     n=1
     request.session['sub'] = "DWM"
-    request.session['lst'] = []
+    
     with connection.cursor() as cursor:
         try:
             cursor.execute("select question, answer from dwmques where id = %s", [n])
             row = cursor.fetchone()
         except:
             return render(request, 'quiz.html',{'msg':'Question out of range...'})
-    global answer
+    
+    global question, answer, ansstr, lst, tries
+    tries = 0
+    lst = []
     answer = row[1]
-    return render(request, 'quiz.html',{'sub':'DWM','question':row[0]})
+    ansstr = "_" * len(answer)
+    question = row[0]
+    return render(request, 'quiz.html',{'sub':'DWM','question':question,'len_ans':len(answer)})
 
 def CN(request):
     n = randint(1, 10)
@@ -135,12 +140,21 @@ def CN(request):
     return render(request, 'quiz.html',{'sub':sub})
 
 def clicked(request,string):
+    global lst, ansstr, tries
+    if tries==3:
+        return(render(request, "loss.html"))
+    len_ans = len(answer)
     x = request.path
     letter = x[len(x)-1:]
-    request.session.get('lst').append(letter)
-    print(request.session.get('lst'))
+    lst.append(letter)
     sub = request.session.get('sub')
-    if letter in answer:
-        print(answer)
+    occurences = [i for i in range(len_ans) if answer.startswith(letter, i)]
+
+    for i in occurences:
+        ansstr = ansstr[:i] + answer[i] + ansstr[i+1:]
+
+    if len(occurences)==0:
+        tries += 1
+
     
-    return(render(request, 'quiz.html', {'sub':sub,'url':'letteronly',"lst":request.session.get('lst')}))
+    return(render(request, 'quiz.html', {'sub':sub,'question':question, 'url':'letteronly',"lst":lst,'len_ans':len_ans,'ansstr':ansstr}))
