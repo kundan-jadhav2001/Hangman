@@ -8,18 +8,18 @@
     <title>Document</title>
     <style>
         p {
-            font-size: 30px;
+            font-size: 50px;
             margin-top: 5%;
         }
 
         label {
-            font-size: 30px;
+            font-size: 50px;
         }
 
         .grid-contianer {
             display: grid;
             grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
-            background-color: #ffffff;
+            background-color: #fff9cb;
             padding: 10px;
             margin-top: 10%;
             width: 1040px;
@@ -27,14 +27,17 @@
 
         .griditem {
             margin-top: 70%;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(92,195,236,0.3);
             border: 1px solid rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            font-size: 30px;
+            padding: 10px;
+            font-size: 50px;
             text-align: center;
             margin: 5px;
             width: 70px;
             height: 70px;
+        }
+        body{
+            background-color: rgba(92,195,236,1);
         }
     </style>
 
@@ -49,9 +52,6 @@
 
         <p>{{question}}</p>
         <br>
-        <!-- {%for i in "{{len_ans}}"|ljust:11%}
-            <input type="text">
-        {% endfor %} -->
 
         <label>{{ansstr}}</label>
 

@@ -9,6 +9,8 @@ urlpatterns = [
     path('confirmlogin', views.confirmlogin),
     path('confirmsignup', views.confirmsignup),
     path('createtable', views.createtable),
+    path('forgotpass',views.forgotpass),
+    path('newpass',views.newpass),
     path('selectsub', views.selectsub),
     path('quiz', views.quiz),
     path('SE',views.SE),

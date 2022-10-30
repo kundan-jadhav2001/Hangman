@@ -2,11 +2,13 @@ from django.shortcuts import render
 from django.db import connection
 from django.contrib import messages
 from random import randint
+import smtplib
 
 # Create your views here.
 def createtable(request):
     with connection.cursor() as cursor:
         # cursor.execute("create table dwmques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
+        cursor.execute("insert into dwmques values(1,'One type of metadata','operational')")
         cursor.execute("insert into dwmques values(2,'Kind of system required for data warehouse','sourcesystem')")
         cursor.execute("insert into dwmques values(3,'It contains non-volatile data','OLAP')")
         cursor.execute("insert into dwmques values(4,'data warehouse is application','independent')")
@@ -33,7 +35,7 @@ def confirmsignup(request):
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
-        confirmpass = request.POST['confpass']
+        confirmpass = request.POST['confpassword']
 
         with connection.cursor() as cursor:
             cursor.execute("select username from userinfo where username = %s", [username])
@@ -125,10 +127,13 @@ def DWM(request):
     global question, answer, ansstr, lst, tries
     tries = 0
     lst = []
-    answer = row[1].lower()
-    ansstr = "_" * len(answer)
+    ans = list(row[1].lower())
+    answer = ""
+    for i in ans:
+        answer = answer + i + " "
+    ansstr = "_ " * (len(answer)//2)
     question = row[0]
-    return render(request, 'quiz.html',{'sub':'DWM','question':question,'len_ans':len(answer)})
+    return render(request, 'quiz.html',{'sub':'DWM','question':question,'len_ans':len(answer),'ansstr':ansstr})
 
 def CN(request):
     n = randint(1, 10)
@@ -164,3 +169,50 @@ def clicked(request,string):
 
     
     return(render(request, 'quiz.html', {'sub':sub,'question':question, 'url':'letteronly',"lst":lst,'len_ans':len_ans,'ansstr':ansstr}))
+
+
+def forgotpass(request):
+    if request.method == 'POST':
+
+        gmail_user = 'en20133485@git-india.edu.in'
+        gmail_password = 'kundan@2001'
+
+        sent_from = gmail_user
+        to = request.POST['email']
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("select email from userinfo where email = %s", [to])
+                row = cursor.fetchone()
+            except:
+                return render(request, 'forgotpass.html',{'msg':"Error occured while connecting to database"})
+
+
+        subject = 'OTP'
+        otp = randint(100000, 999999)
+        body = f'The OTP for password reset is {otp}'
+
+        email_text = """
+        From: %s
+        To: %s
+        Subject: %s
+        %s
+        """ % (sent_from, to, subject, body)
+        if row != None:
+            try:
+                server = smtplib.SMTP('smtp.gmail.com', 465)
+                server.starttls()
+                server.login(gmail_user, gmail_password)
+                server.sendmail(sent_from, to, email_text)
+                server.quit()
+
+                print('Email sent!')
+                return(render(request, "newpass.html"))
+            except Exception as e:
+                print(e)
+        else:
+            return render(request, 'forgotpass.html',{'msg':"Email not found in database. You don't have accound"})
+    return(render(request, "forgotpass.html" ))
+    
+
+def newpass(request):
+    pass
