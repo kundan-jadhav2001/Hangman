@@ -8,10 +8,13 @@ import smtplib
 def createtable(request):
     with connection.cursor() as cursor:
         # cursor.execute("create table dwmques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
-        cursor.execute("insert into dwmques values(1,'One type of metadata','operational')")
-        cursor.execute("insert into dwmques values(2,'Kind of system required for data warehouse','sourcesystem')")
-        cursor.execute("insert into dwmques values(3,'It contains non-volatile data','OLAP')")
-        cursor.execute("insert into dwmques values(4,'data warehouse is application','independent')")
+
+
+        cursor.execute("insert into dwmques values(5,'question','ans')")
+
+        # cursor.execute("insert into dwmques values(2,'Kind of system required for data warehouse','sourcesystem')")
+        # cursor.execute("insert into dwmques values(3,'It contains non-volatile data','OLAP')")
+        # cursor.execute("insert into dwmques values(4,'data warehouse is application','independent')")
 
         # cursor.execute("insert into userinfo values('kundan@gmail.com', 'kundan', 'kundan' )")
         # cursor.execute("drop table userinfo")
@@ -67,14 +70,15 @@ def confirmlogin(request):
                     cursor.execute("select username, pass from userinfo where username = %s", [username])
                     # cursor.execute("select * from userinfo ;")
                     row = cursor.fetchone()
+                    if row!= None or row != "":
+                        if username==row[0]:
+                            if password==row[1]:
+                                return render(request, "selectsub.html", {"username":username, "password":password})
+                            else:
+                                return render(request, 'login.html',{'msg':"Password is incorrect"})
                 except:
                     return render(request, 'signup.html',{'msg':'You have no account please create one...'})
-                if row!= None or row != "":
-                    if username==row[0]:
-                        if password==row[1]:
-                            return render(request, "selectsub.html", {"username":username, "password":password})
-                        else:
-                            return render(request, 'login.html',{'msg':"Password is incorrect"})
+                
     return render(request, 'signup.html',{'msg':'You have no account please create one...'})
             
 
