@@ -7,12 +7,13 @@ import smtplib
 # Create your views here.
 def createtable(request):
     with connection.cursor() as cursor:
-        # cursor.execute("create table dwmques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
+        cursor.execute("create table cnques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
 
 
-        cursor.execute("insert into dwmques values(5,'question','ans')")
+        #cursor.execute("insert into cnques values(5,'question','ans')")
 
-        # cursor.execute("insert into dwmques values(2,'Kind of system required for data warehouse','sourcesystem')")
+        cursor.execute("insert into cnques values(1,'What is used for remote logging','telnet')")
+        cursor.execute("insert into cnques values(2,'What is used for remote logging in secured manner','ssh')")
         # cursor.execute("insert into dwmques values(3,'It contains non-volatile data','OLAP')")
         # cursor.execute("insert into dwmques values(4,'data warehouse is application','independent')")
 
@@ -140,15 +141,26 @@ def DWM(request):
     return render(request, 'quiz.html',{'sub':'DWM','question':question,'len_ans':len(answer),'ansstr':ansstr})
 
 def CN(request):
-    n = randint(1, 10)
-    sub = "CN"
+    n = randint(1, 2)
+    request.session['sub'] = "CN"
+    
     with connection.cursor() as cursor:
         try:
             cursor.execute("select question, answer from cnques where id = %s", [n])
             row = cursor.fetchone()
         except:
             return render(request, 'quiz.html',{'msg':'Question out of range...'})
-    return render(request, 'quiz.html',{'sub':sub})
+    
+    global question, answer, ansstr, lst, tries
+    tries = 0
+    lst = []
+    ans = list(row[1].lower())
+    answer = ""
+    for i in ans:
+        answer = answer + i + " "
+    ansstr = "_ " * (len(answer)//2)
+    question = row[0]
+    return render(request, 'quiz.html',{'sub':'CN','question':question,'len_ans':len(answer),'ansstr':ansstr})
 
 def clicked(request,string):
     global lst, ansstr, tries

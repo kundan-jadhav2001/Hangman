@@ -18,6 +18,8 @@ urlpatterns = [
     path('DWM',views.DWM),
     path('CN',views.CN),
     path('quiz/SE/""',views.clicked),
-    path('quiz/DWM/<string>',views.clicked)
+    path('quiz/CN/""',views.clicked),
+    path('quiz/DWM/<string>',views.clicked),
+    path('quiz/CN/<string>',views.clicked)
 
 ]
