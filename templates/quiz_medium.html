@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medium</title>
+    <style>
+        p {
+            font-size: 50px;
+            margin-top: 5%;
+        }
+
+        label {
+            font-size: 50px;
+        }
+
+        .grid-contianer {
+            display: grid;
+            grid-template-columns: auto auto auto auto auto auto auto auto auto auto auto auto auto;
+            background-color: #fff9cb;
+            padding: 10px;
+            margin-top: 10%;
+            width: 1040px;
+            margin-bottom: 50px;
+        }
+
+        .griditem {
+            margin-top: 70%;
+            background-color: rgba(92,195,236,0.3);
+            border: 1px solid rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            font-size: 50px;
+            text-align: center;
+            margin: 5px;
+            width: 70px;
+            height: 70px;
+        }
+        body{
+            background-color: rgba(92,195,236,1);
+        }
+
+        .hangmang_head{
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            margin-left: 100px;
+            margin-top: 130px;
+        }
+
+        .hangman_body{
+            position: absolute;
+            width: 100px;
+            height: 150px;
+            margin-top: 228px;
+            margin-left: 100px;
+        }
+
+        .horizontalline{
+            height: 20px;
+            width: 210px;
+            background-color: red;
+            margin-top: 85px;
+            position: absolute;
+            margin-left: 20px;
+        }
+
+        .verticalline{
+            width: 20px;
+            height: 350px;
+            position: absolute;
+            background-color: red;
+            margin-top: 70px;
+            margin-left: 40px;
+        }
+
+        .circle{
+            width: 70px;
+            height: 70px;
+            position: absolute;
+            background-color: red;
+            margin-top: 100px;
+            margin-left: 170px;
+            border-radius: 50px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+    {% if sub %}
+		<div style="color: red;">*{{sub}}</div>
+	{% endif %}
+    <br>
+    <div class="verticalline"></div>
+    <div class="horizontalline"></div>
+    <div class="circle"></div>
+    {% if tries %}
+        <p style="position: absolute; margin-left: 95%;">{{tries}}</p>
+    {% endif %}
+    {% if tries <= 2 %}
+        <img src="{% static 'hangman_body.png' %}" class="hangman_body">
+        {% if tries <= 1 %}
+            <img src="{% static 'hangman_head.png' %}" class="hangman_head">
+        {% endif %}
+    {% endif %}
+        <div style="display: flex;justify-content: center; align-items: center; text-align: center; height: 100%; background-color: snow;">
+            <div>
+                <p>{{question}}</p>
+                <br>
+
+                <label>{{ansstr}}</label>
+
+                <div class="grid-contianer">
+
+
+                    
+                    <a href="quiz_medium/a"><button class="griditem" {% if 'a' in lst%} disabled {% endif %}>A</button></a>
+                    <a href="quiz_medium/b"><button class="griditem" {% if 'b' in lst%} disabled {% endif %}>B</button></a>
+                    <a href="quiz_medium/c"><button class="griditem" {% if 'c' in lst%} disabled {% endif %}>C</button></a>
+                    <a href="quiz_medium/d"><button class="griditem" {% if 'd' in lst%} disabled {% endif %}>D</button></a>
+                    <a href="quiz_medium/e"><button class="griditem" {% if 'e' in lst%} disabled {% endif %}>E</button></a>
+
+                    <a href="quiz_medium/f"><button class="griditem" {% if 'f' in lst%} disabled {% endif %}>F</button></a>
+                    <a href="quiz_medium/g"><button class="griditem" {% if 'g' in lst%} disabled {% endif %}>G</button></a>
+                    <a href="quiz_medium/h"><button class="griditem" {% if 'h' in lst%} disabled {% endif %}>H</button></a>
+                    <a href="quiz_medium/i"><button class="griditem" {% if 'i' in lst%} disabled {% endif %}>I</button></a>
+                    <a href="quiz_medium/j"><button class="griditem" {% if 'j' in lst%} disabled {% endif %}>J</button></a>
+
+                    <a href="quiz_medium/k"><button class="griditem" {% if 'k' in lst%} disabled {% endif %}>K</button></a>
+                    <a href="quiz_medium/l"><button class="griditem" {% if 'l' in lst%} disabled {% endif %}>L</button></a>
+                    <a href="quiz_medium/m"><button class="griditem" {% if 'm' in lst%} disabled {% endif %}>M</button></a>
+                    <a href="quiz_medium/n"><button class="griditem" {% if 'n' in lst%} disabled {% endif %}>N</button></a>
+                    <a href="quiz_medium/o"><button class="griditem" {% if 'o' in lst%} disabled {% endif %}>O</button></a>
+
+                    <a href="quiz_medium/p"><button class="griditem" {% if 'p' in lst%} disabled {% endif %}>P</button></a>
+                    <a href="quiz_medium/q"><button class="griditem" {% if 'q' in lst%} disabled {% endif %}>Q</button></a>
+                    <a href="quiz_medium/r"><button class="griditem" {% if 'r' in lst%} disabled {% endif %}>R</button></a>
+                    <a href="quiz_medium/s"><button class="griditem" {% if 's' in lst%} disabled {% endif %}>S</button></a>
+                    <a href="quiz_medium/t"><button class="griditem" {% if 't' in lst%} disabled {% endif %}>T</button></a>
+
+                    <a href="quiz_medium/u"><button class="griditem" {% if 'u' in lst%} disabled {% endif %}>U</button></a>
+                    <a href="quiz_medium/v"><button class="griditem" {% if 'v' in lst%} disabled {% endif %}>V</button></a>
+                    <a href="quiz_medium/w"><button class="griditem" {% if 'w' in lst%} disabled {% endif %}>W</button></a>
+                    <a href="quiz_medium/x"><button class="griditem" {% if 'x' in lst%} disabled {% endif %}>X</button></a>
+                    <a href="quiz_medium/y"><button class="griditem" {% if 'y' in lst%} disabled {% endif %}>Y</button></a>
+
+                    <a href="quiz_medium/z"><button class="griditem" {% if 'z' in lst%} disabled {% endif %}>Z</button></a>
+
+                </div>
+            </div>
+        </div>
+</body>
+
+</html>

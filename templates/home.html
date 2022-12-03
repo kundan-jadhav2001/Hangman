@@ -9,6 +9,18 @@
     <link rel="stylesheet" href="{% static 'home.css' %}">
 </head>
 <body>
+    <div class="avtar">
+        {% if userlogedin %}
+            <img class="img" src="{% static 'userimg1.png' %}" alt="userimg">
+            <p>{{userlogedin}}</p>
+            <div class="actions">
+                <a href="account">Account</a>
+                <br>
+                <a href="logout">Logout</a>
+            </div>
+            
+        {% endif %}
+    </div>
     <div class="banner"></div>
 
     <div class="content">

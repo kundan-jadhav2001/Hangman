@@ -9,23 +9,21 @@ def createtable(request):
     with connection.cursor() as cursor:
         cursor.execute("create table cnques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
 
-
-        #cursor.execute("insert into cnques values(5,'question','ans')")
-
         cursor.execute("insert into cnques values(1,'What is used for remote logging','telnet')")
         cursor.execute("insert into cnques values(2,'What is used for remote logging in secured manner','ssh')")
-        # cursor.execute("insert into dwmques values(3,'It contains non-volatile data','OLAP')")
-        # cursor.execute("insert into dwmques values(4,'data warehouse is application','independent')")
-
-        # cursor.execute("insert into userinfo values('kundan@gmail.com', 'kundan', 'kundan' )")
-        # cursor.execute("drop table userinfo")
+        
         # cursor.execute("create table userinfo(email Varchar(30), pass varchar(20), username varchar(20) primary key)")
 
 
-    
-
 def home(request):
-    return render(request, 'home.html',{"msg":""})
+    try:
+        if request.session['userlogedin']:
+            return render(request, 'home.html',{"msg":"",'userlogedin':request.session['userlogedin']})
+    except:
+        return render(request, 'home.html',{"msg":""})
+
+def account(request):
+    return render(request, 'userdetails.html')
 
 def login(request):
     return render(request, 'login.html')
@@ -55,9 +53,6 @@ def confirmsignup(request):
 
     return render(request, "signup.html", {"msg":msg})
 
-        
-    
-
 def confirmlogin(request):
     if request.method == "POST":
         username = request.POST['username']
@@ -74,6 +69,7 @@ def confirmlogin(request):
                     if row!= None or row != "":
                         if username==row[0]:
                             if password==row[1]:
+                                request.session['userlogedin'] = row[0]
                                 return render(request, "selectsub.html", {"username":username, "password":password})
                             else:
                                 return render(request, 'login.html',{'msg':"Password is incorrect"})
@@ -82,109 +78,66 @@ def confirmlogin(request):
                 
     return render(request, 'signup.html',{'msg':'You have no account please create one...'})
             
-
+def logout(request):
+    if request.session['userlogedin']:
+        del request.session['userlogedin']
+    return render(request, 'home.html')
     
 
 def selectsub(request):
     return render(request, 'selectsub.html')
 
-def quiz(request):
-    return render(request, 'quiz.html')
-
-
-
-
-
-def SE(request):
-    n=1
-    sub = 'SE'
-    # n = randint(1, 10)
-    with connection.cursor() as cursor:
-        try:
-            cursor.execute("select question, answer from seques where id = %s", [n])
-            row = cursor.fetchone()
-        except:
-            return render(request, 'quiz.html',{'msg':'Question out of range...','sub':'SE'})
-    return render(request, 'quiz.html',{'sub':sub, "question":row[0]})
-
-def IP(request):
-    n = randint(1, 10)
-    sub = "IP"
-    with connection.cursor() as cursor:
-        try:
-            cursor.execute("select question, answer from ipques where id = %s", [n])
-            row = cursor.fetchone()
-        except:
-            return render(request, 'quiz.html',{'msg':'Question out of range...'})
-    return render(request, 'quiz.html',{'sub':sub})
-
-def DWM(request):
+#random question generator for easy level
+def subject(request, string):
+    sub = string
+    print(sub)
     n = randint(1, 4)
-    request.session['sub'] = "DWM"
-    
+    request.session['sub'] = sub
+
+    global question, answer, ansstr, lst, tries
+    tries = 3
     with connection.cursor() as cursor:
         try:
-            cursor.execute("select question, answer from dwmques where id = %s", [n])
+            query = f"select question, answer from {sub}ques where id = {n}"
+            cursor.execute(query)
             row = cursor.fetchone()
-        except:
-            return render(request, 'quiz.html',{'msg':'Question out of range...'})
-    
-    global question, answer, ansstr, lst, tries
-    tries = 0
+        except Exception as e:
+            print(e)
+            return render(request, 'quiz.html',{'msg':'Question out of range...','tries':tries, 'sub':sub})
     lst = []
     ans = list(row[1].lower())
     answer = ""
+    
     for i in ans:
         answer = answer + i + " "
     ansstr = "_ " * (len(answer)//2)
     question = row[0]
-    return render(request, 'quiz.html',{'sub':'DWM','question':question,'len_ans':len(answer),'ansstr':ansstr})
+    return render(request, 'quiz.html',{'sub':sub,'question':question,'len_ans':len(answer),'ansstr':ansstr,'tries':tries})
 
-def CN(request):
-    n = randint(1, 2)
-    request.session['sub'] = "CN"
-    
-    with connection.cursor() as cursor:
-        try:
-            cursor.execute("select question, answer from cnques where id = %s", [n])
-            row = cursor.fetchone()
-        except:
-            return render(request, 'quiz.html',{'msg':'Question out of range...'})
-    
-    global question, answer, ansstr, lst, tries
-    tries = 0
-    lst = []
-    ans = list(row[1].lower())
-    answer = ""
-    for i in ans:
-        answer = answer + i + " "
-    ansstr = "_ " * (len(answer)//2)
-    question = row[0]
-    return render(request, 'quiz.html',{'sub':'CN','question':question,'len_ans':len(answer),'ansstr':ansstr})
-
+#which button clicked
 def clicked(request,string):
     global lst, ansstr, tries
-    if tries==3:
-        return(render(request, "loss.html"))
     
     len_ans = len(answer)
-    x = request.path
-    letter = x[len(x)-1:]
+    url = request.path
+    letter = url[len(url)-1:]
     lst.append(letter)
     sub = request.session.get('sub')
     occurences = [i for i in range(len_ans) if answer.startswith(letter, i)]
 
-    if ansstr==answer:
-        return(render(request, 'won.html',{'sub':sub}))
-
     for i in occurences:
         ansstr = ansstr[:i] + answer[i] + ansstr[i+1:]
 
-    if len(occurences)==0:
-        tries += 1
+    if ansstr==answer:
+        return(render(request, 'won.html',{'sub':sub}))
 
+    if len(occurences)==0:
+        tries -= 1
+        
+    if tries<1:
+        return(render(request, "loss.html"))
     
-    return(render(request, 'quiz.html', {'sub':sub,'question':question, 'url':'letteronly',"lst":lst,'len_ans':len_ans,'ansstr':ansstr}))
+    return(render(request, 'quiz.html', {'sub':sub,'question':question, 'url':'letteronly',"lst":lst,'len_ans':len_ans,'ansstr':ansstr,'tries':tries}))
 
 
 def forgotpass(request):
@@ -232,3 +185,52 @@ def forgotpass(request):
 
 def newpass(request):
     pass
+
+
+#level medium
+def medium(request, string):
+    sub = string[7:]
+    n = randint(1, 4)
+    request.session['sub'] = sub
+
+    global question, answer, ansstr, lst, tries
+    tries = 3
+    with connection.cursor() as cursor:
+        try:
+            cursor.execute(f"select question, answer from {sub}ques where id = {n}")
+            row = cursor.fetchone()
+        except Exception as e:
+            print(e)
+            return render(request, 'quiz_medium.html',{'msg':'Question out of range...','tries':tries, 'sub':sub})
+    lst = []
+    ans = list(row[1].lower())
+    answer = ""
+    
+    for i in ans:
+        answer = answer + i + " "
+    ansstr = "_ " * (len(answer)//2)
+    question = row[0]
+    return render(request, 'quiz_medium.html',{'sub':sub,'question':question,'len_ans':len(answer),'ansstr':ansstr,'tries':tries})
+
+def clicked_medium(request,string):
+    global ansstr, tries, answer
+    # sub = request.session.get('sub')
+    sub = "DWM"
+
+    url = request.path
+    letter = url[len(url)-1:]
+    
+    index = answer.find(letter)
+    if index>=0:
+        ansstr = ansstr[:index] + answer[index] + ansstr[index+1:]
+        answer = answer[:index] + '*' + answer[index+1:]
+    else:
+        tries -= 1
+
+    if '_' not in ansstr:
+        return(render(request, 'won.html',{'sub':sub}))
+        
+    if tries<1:
+        return(render(request, "loss.html"))
+    
+    return(render(request, 'quiz_medium.html', {'sub':sub,'question':question, 'url':'letteronly', 'ansstr':ansstr,'tries':tries}))
