@@ -52,7 +52,21 @@
         .dropdown:hover .dropbtn {
             background-color: #3e8e41;
         }
+
+		.radio_img{
+			width: 50px;
+			height: 50px;
+			margin-right: 20px;
+			margin-bottom: 10px;
+		}
+
 	</style>
+
+	{% if msg %}
+	<script>
+		alert("{{msg}}");
+	</script>
+	{% endif %}
 </head>
 
 <body>
@@ -61,57 +75,60 @@
 		integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
 		crossorigin="anonymous"></script>
 
-	{% if msg %}
-	<div style="color: red;">*{{msg}}</div>
-	{% endif %}
 	<section class="vh-100" style="background-color: rgb(43, 110, 136);">
 		<div class="container py-5 h-100">
-			<div class="row d-flex justify-content-center align-items-center h-100">
+			<div class="row d-flex justify-content-center align-items-center h-100" style="width: 1500px;">
 				<div class="col col-xl-10">
 					<div class="card" style="border-radius: 1rem;">
 						<div class="row g-0">
 							<div class="col-md-6 col-lg-5 d-none d-md-block">
 								<img src="{%static 'signup.png'%}" alt="login form" class="img-fluid"
-									style="border-radius: 1rem 0 0 1rem; height: 720px;" />
+									style="border-radius: 1rem 0 0 1rem; height: 770px;" />
 							</div>
 							<div class="col-md-6 col-lg-7 d-flex align-items-center">
 								<div class="card-body p-4 p-lg-5 text-black">
 
-									<form action="confirmlogin" method="POST">{%csrf_token%}
+									<form action="confirmsignup" method="POST">{%csrf_token%}
 										<h1 class="fw-normal mb-3 pb-3" style="letter-spacing: 1px;">
 											Create your account
 										</h1>
 
 										<div class="form-outline mb-4">
 											Name
-											<input type="text" id="form2Example17" class="form-control form-control-lg"
-												name="name">
+											<input type="text" id="form2Example17" onkeydown="return /[a-z ]/i.test(event.key)" class="form-control form-control-lg"
+												name="name" required>
 										</div>
 
 										<div class="form-outline mb-4">
 											Username
-											<input type="text" id="form2Example27" class="form-control form-control-lg"
-												name="username">
+											<input type="text" id="form2Example27" onkeydown="return /[a-z0-9_]/i.test(event.key)" class="form-control form-control-lg"
+												name="username" required>
 										</div>
 
 										<div class="form-outline mb-4">
 											Email
 											<input type="email" id="form2Example17" class="form-control form-control-lg"
-												name="name">
+												name="email" required>
 										</div>
 
 										<div class="form-outline mb-4">
 											Password
 											<input type="password" id="form2Example27"
-												class="form-control form-control-lg" name="username">
+												class="form-control form-control-lg" name="password" required>
 										</div>
 
-										<!-- <div class="form-outline mb-4">
-											<select name="avatar" id="avatar">
-												<option value="avatar1" style="background-image:url(../static/userimg1.jpg)">aklfjdls</option>
-												<option value="avatar2" style="background-image:url(../static/userimg2.jpg)">ajkfds;la</option>
-											</select>
-										</div> -->
+										<div class="form-outline mb-4">
+
+											{% for option in avatar %}
+												{% if forloop.counter != 1 %}
+													<input type="radio" name="avatar" value="{{option}}">
+													<img src="{% static  '' %}{{option}}.png" alt="img1" class="radio_img">
+												{% else %}
+													<input type="radio" name="avatar" value="{{option}}" checked>
+													<img src="{% static '' %}{{option}}.png" alt="img1" class="radio_img">
+												{% endif %}
+											{% endfor %}
+										</div>
 
 										<div class="pt-1 mb-4">
 											<button class="btn btn-dark btn-lg btn-block" type="submit">Signup</button>

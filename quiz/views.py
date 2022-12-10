@@ -7,12 +7,15 @@ import smtplib
 # Create your views here.
 def createtable(request):
     with connection.cursor() as cursor:
-        cursor.execute("create table cnques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
+        pass
+        # cursor.execute("create table cnques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
 
-        cursor.execute("insert into cnques values(1,'What is used for remote logging','telnet')")
-        cursor.execute("insert into cnques values(2,'What is used for remote logging in secured manner','ssh')")
+        # cursor.execute("insert into cnques values(1,'What is used for remote logging','telnet')")
+        # cursor.execute("insert into cnques values(2,'What is used for remote logging in secured manner','ssh')")
         
-        # cursor.execute("create table userinfo(email Varchar(30), pass varchar(20), username varchar(20) primary key)")
+        
+        # cursor.execute("drop table userinfo;")
+        # cursor.execute("create table userinfo(name Varchar(100), username varchar(20) primary key, email Varchar(50), pass Varchar(20),avatar Varchar(10));")
 
 
 def home(request):
@@ -29,24 +32,23 @@ def login(request):
     return render(request, 'login.html')
 
 def signup(request):
-    return render(request, 'signup.html')
+    return render(request, 'signup.html', {"avatar":[1,2,3,4,5,6]})
 
 def confirmsignup(request):
     msg = ""
     if request.method == 'POST':
+        name = request.POST['name']
         username = request.POST['username']
         email = request.POST['email']
         password = request.POST['password']
-        confirmpass = request.POST['confpassword']
+        avatar = request.POST['avatar']
 
         with connection.cursor() as cursor:
-            cursor.execute("select username from userinfo where username = %s", [username])
-            # cursor.execute("select * from userinfo ;")
             row = cursor.fetchone()
             if row == None:
-                cursor.execute("insert into userinfo values(%s,%s,%s);",[email,password,username])
-                msg = 'Profile details added to database.'
-                return render(request, "home.html", {"msg":msg})
+                cursor.execute("insert into userinfo values(%s,%s,%s,%s,%s);",[name, username, email, password, avatar])
+                msg = 'Profile details added to database. Login now'
+                return render(request, "login.html", {"msg":msg})
                 
             else:
                 msg = 'Username already exist try something new'
@@ -58,23 +60,19 @@ def confirmlogin(request):
         username = request.POST['username']
         password = request.POST['password'] 
 
-        if username=="" or password == "":
-            return render(request, "login.html", {'msg':"Username or Password should not be empty"})
-        else:
-            with connection.cursor() as cursor:
-                try:
-                    cursor.execute("select username, pass from userinfo where username = %s", [username])
-                    # cursor.execute("select * from userinfo ;")
-                    row = cursor.fetchone()
-                    if row!= None or row != "":
-                        if username==row[0]:
-                            if password==row[1]:
-                                request.session['userlogedin'] = row[0]
-                                return render(request, "selectsub.html", {"username":username, "password":password})
-                            else:
-                                return render(request, 'login.html',{'msg':"Password is incorrect"})
-                except:
-                    return render(request, 'signup.html',{'msg':'You have no account please create one...'})
+        with connection.cursor() as cursor:
+            try:
+                cursor.execute("select username, pass from userinfo where username = %s", [username])
+                row = cursor.fetchone()
+                if row!= None or row != "":
+                    if username == row[0]:
+                        if password == row[1]:
+                            request.session['userlogedin'] = row[0]
+                            return render(request, "selectsub.html")
+                        else:
+                            return render(request, 'login.html',{'msg':"Password is incorrect"})
+            except:
+                return render(request, 'signup.html',{'msg':'You have no account please create one...'})
                 
     return render(request, 'signup.html',{'msg':'You have no account please create one...'})
             
@@ -193,7 +191,7 @@ def medium(request, string):
     n = randint(1, 4)
     request.session['sub'] = sub
 
-    global question, answer, ansstr, lst, tries
+    global question, answer, ansstr, tries
     tries = 3
     with connection.cursor() as cursor:
         try:
@@ -202,7 +200,6 @@ def medium(request, string):
         except Exception as e:
             print(e)
             return render(request, 'quiz_medium.html',{'msg':'Question out of range...','tries':tries, 'sub':sub})
-    lst = []
     ans = list(row[1].lower())
     answer = ""
     
