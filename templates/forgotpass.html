@@ -4,15 +4,19 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>forgot Password</title>
+    <title>Forgot Password</title>
 </head>
 <body>
     {% if msg %}
         <div style="color: red;">{{msg}}</div>
     {% endif %}
     <form action="forgotpass" method="POST">{%csrf_token%}
-        <input type="text" name="email" class="email" placeholder="Enter email here to get otp">
+        {% if otp == '' %}
+            <input type="text" name="email" class="email" placeholder="Enter email here to get otp">
         <br>
+        {% else %}
+        <input type="number" name="otp" class="otp" placeholder="Enter otp">
+        {% endif %}
         <button type="submit">Submit</button>
     </form>
 </body>

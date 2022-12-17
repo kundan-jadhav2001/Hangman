@@ -11,11 +11,13 @@ urlpatterns = [
     path('confirmlogin', views.confirmlogin),
     path('confirmsignup', views.confirmsignup),
     path('createtable', views.createtable),
+    
     path('forgotpass',views.forgotpass),
-    path('newpass',views.newpass),
+    path('setnewpass',views.setnewpass),
+
     path('selectsub', views.selectsub),
 
-    path('easy_<string>', views.subject),
+    path('easy_<string>', views.easy),
     path('quiz/<string>', views.clicked),
 
     path('medium_<string>',views.medium),

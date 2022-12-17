@@ -8,10 +8,12 @@
 </head>
 <body>
     <h1>Set up new password here</h1>
-    <input type="password" class="newpass" placeholder="Enter new password">
-    <br>
-    <input type="password" class="confnewpass" placeholder="Re-enter new password">
-    <br>
-    <button class="submit" type="submit">Submit</button>
+    <form action="setnewpass" method="post">{%csrf_token%}
+        <input type="password" name="newpass" placeholder="Enter new password">
+        <br>
+        <input type="password" name="confnewpass" placeholder="Re-enter new password">
+        <br>
+        <button class="submit" type="submit">Submit</button>
+    </form>
 </body>
 </html>

@@ -3,18 +3,20 @@ from django.db import connection
 from django.contrib import messages
 from random import randint
 import smtplib
+from django.core.mail import send_mail
+from django.conf import settings
 
 # Create your views here.
 def createtable(request):
     with connection.cursor() as cursor:
-        pass
+        # cursor.execute("create table userinfo(name Varchar(100), username varchar(20) , email Varchar(50), pass Varchar(20),avatar Varchar(10), primary key (username, email));")  
         # cursor.execute("create table cnques(id integer primary key AUTOINCREMENT, question varchar(100), answer varchar(50))")
 
         # cursor.execute("insert into cnques values(1,'What is used for remote logging','telnet')")
         # cursor.execute("insert into cnques values(2,'What is used for remote logging in secured manner','ssh')")
         
         
-        # cursor.execute("drop table userinfo;")
+        cursor.execute("drop table old_engineers;")
         # cursor.execute("create table userinfo(name Varchar(100), username varchar(20) primary key, email Varchar(50), pass Varchar(20),avatar Varchar(10));")
 
 
@@ -26,7 +28,11 @@ def home(request):
         return render(request, 'home.html',{"msg":""})
 
 def account(request):
-    return render(request, 'userdetails.html')
+    username = request.session['userlogedin'][0]
+    with connection.cursor() as cursor:
+        cursor.execute("select * from userinfo where username = %s;",[username])
+        row = cursor.fetchone()
+    return render(request, 'userdetails.html', {"username":username, "name":row[0], "email":row[2], "img":row[4]})
 
 def login(request):
     return render(request, 'login.html')
@@ -62,12 +68,12 @@ def confirmlogin(request):
 
         with connection.cursor() as cursor:
             try:
-                cursor.execute("select username, pass from userinfo where username = %s", [username])
+                cursor.execute("select username, pass, avatar from userinfo where username = %s", [username])
                 row = cursor.fetchone()
                 if row!= None or row != "":
                     if username == row[0]:
                         if password == row[1]:
-                            request.session['userlogedin'] = row[0]
+                            request.session['userlogedin'] = [row[0], row[2]]
                             return render(request, "selectsub.html")
                         else:
                             return render(request, 'login.html',{'msg':"Password is incorrect"})
@@ -83,14 +89,15 @@ def logout(request):
     
 
 def selectsub(request):
+    global score
+    score = 0
     return render(request, 'selectsub.html')
 
 #random question generator for easy level
-def subject(request, string):
+def easy(request, string):
     sub = string
-    print(sub)
     n = randint(1, 4)
-    request.session['sub'] = sub
+    request.session['sub'] = 'easy_' + sub
 
     global question, answer, ansstr, lst, tries
     tries = 3
@@ -114,7 +121,7 @@ def subject(request, string):
 
 #which button clicked
 def clicked(request,string):
-    global lst, ansstr, tries
+    global lst, ansstr, tries, score
     
     len_ans = len(answer)
     url = request.path
@@ -127,63 +134,67 @@ def clicked(request,string):
         ansstr = ansstr[:i] + answer[i] + ansstr[i+1:]
 
     if ansstr==answer:
-        return(render(request, 'won.html',{'sub':sub}))
+        score += 1
+        return render(request, 'won.html',{'sub':sub,"score":score})
 
     if len(occurences)==0:
         tries -= 1
         
     if tries<1:
-        return(render(request, "loss.html"))
+        return render(request, "loss.html")
     
-    return(render(request, 'quiz.html', {'sub':sub,'question':question, 'url':'letteronly',"lst":lst,'len_ans':len_ans,'ansstr':ansstr,'tries':tries}))
+    return render(request, 'quiz.html', {'sub':sub,'question':question, 'url':'letteronly',"lst":lst,'len_ans':len_ans,'ansstr':ansstr,'tries':tries})
 
 
 def forgotpass(request):
     if request.method == 'POST':
+        global otp, email
+        try:
 
-        gmail_user = 'en20133485@git-india.edu.in'
-        gmail_password = 'kundan@2001'
+            entered_otp = request.POST['otp']
+            print('trying', entered_otp)
+            print(otp)
+            if int(entered_otp) == int(otp):
+                return render(request, 'newpass.html')
+            else:
+                return render(request, 'forgotpass.html', {'msg':"OTP didn't matched", 'otp':''})
+        except:
+            otp = randint(100000, 999999)
+            body = f'The OTP for password reset is {otp}'
+            
+            with connection.cursor() as cursor:
+                try:
+                    email = request.POST["email"]
+                    cursor.execute("select name from userinfo where email = %s", [email])
+                    row = cursor.fetchone()
+                except Exception as e:
+                    return render(request, 'forgotpass.html',{'msg':"Error while connecting to database", 'otp':''})
 
-        sent_from = gmail_user
-        to = request.POST['email']
-        with connection.cursor() as cursor:
-            try:
-                cursor.execute("select email from userinfo where email = %s", [to])
-                row = cursor.fetchone()
-            except:
-                return render(request, 'forgotpass.html',{'msg':"Error occured while connecting to database"})
-
-
-        subject = 'OTP'
-        otp = randint(100000, 999999)
-        body = f'The OTP for password reset is {otp}'
-
-        email_text = """
-        From: %s
-        To: %s
-        Subject: %s
-        %s
-        """ % (sent_from, to, subject, body)
-        if row != None:
-            try:
-                server = smtplib.SMTP('smtp.gmail.com', 465)
-                server.starttls()
-                server.login(gmail_user, gmail_password)
-                server.sendmail(sent_from, to, email_text)
-                server.quit()
-
-                print('Email sent!')
-                return(render(request, "newpass.html"))
-            except Exception as e:
-                print(e)
-        else:
-            return render(request, 'forgotpass.html',{'msg':"Email not found in database. You don't have accound"})
-    return(render(request, "forgotpass.html" ))
+            if row != None:
+                try:
+                    send_mail(
+                    'OTP',
+                    body,
+                    'kundanjadhav2001@gmail.com',
+                    [f'{request.POST["email"]}'],
+                    fail_silently=False,
+                    )
+                    return(render(request, "forgotpass.html",{'otp':otp}))
+                except Exception as e:
+                    print(e)
+            else:
+                return render(request, 'forgotpass.html',{'msg':"Email not found in database. You don't have accound", 'otp':''})
+    return(render(request, "forgotpass.html", {'otp':''} ))
     
 
-def newpass(request):
-    pass
-
+def setnewpass(request):
+    print(email)
+    if request.method == "POST":
+        newpass = request.post['newpass']
+        with connection.cursor() as cursor:
+            cursor.execute(f"update userinfo set pass = {newpass} where email = {email};")
+            return render(request, 'login.html')
+    return render(request, 'forgotpass.html')
 
 #level medium
 def medium(request, string):

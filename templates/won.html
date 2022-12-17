@@ -16,18 +16,17 @@
 </head>
 <body style="margin-top: 10%; font-size: 40px; background-color: rgb(168, 200, 228);">
     <center>
-        You entered the right answer
+        You answered {{score}} {% if score == 1 %} question {% else %} questions {% endif %} right answer.
         <br>
         <br>
         <br>
         Want to continue
         <br>
-        <a href="../../{{sub}}">
-        <button class="continue">Next</button></a>
+        <a href="../{{sub}}"> <button class="continue">Next</button> </a>
         <br>
         Wanna quit
         <br>
-        <a href="../../../..">
+        <a href="../selectsub">
         <button class="quit">Quit</button></a>
     </center>
 </body>
