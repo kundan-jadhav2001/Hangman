@@ -29,7 +29,7 @@
                 <div>{{msg}}</div>
             {% endif %}
             <a href="selectsub">
-            <button type="button" class="b1">Play as Guest</button></a>
+            <button type="button" class="b1">{% if userlogedin %}Play {%else%}Play as Guest {% endif %}</button></a>
             <br>
             <a href="login">
             <button type="button" class="b2">Login</button></a>

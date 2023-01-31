@@ -16,7 +16,7 @@ def createtable(request):
         # cursor.execute("insert into cnques values(2,'What is used for remote logging in secured manner','ssh')")
         
         
-        cursor.execute("drop table old_engineers;")
+        cursor.execute("create table score(username varchar(20) primary key, score integer)")
         # cursor.execute("create table userinfo(name Varchar(100), username varchar(20) primary key, email Varchar(50), pass Varchar(20),avatar Varchar(10));")
 
 
@@ -242,3 +242,9 @@ def clicked_medium(request,string):
         return(render(request, "loss.html"))
     
     return(render(request, 'quiz_medium.html', {'sub':sub,'question':question, 'url':'letteronly', 'ansstr':ansstr,'tries':tries}))
+
+def savescore(request):
+    with connection.cursor() as cursor:
+        string = f"insert into score values('{request.session['userlogedin'][0]}', {score})"
+        cursor.execute(string)
+    return render(request, 'selectsub.html')

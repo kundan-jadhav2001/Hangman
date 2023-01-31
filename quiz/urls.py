@@ -23,6 +23,8 @@ urlpatterns = [
     path('medium_<string>',views.medium),
     path('quiz_medium/<string>',views.clicked_medium),
 
+    path('savescore',views.savescore),
+
     path('account',views.account),
     path('logout',views.logout),
 
